@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const contactsRoutes = require('./routes/contacts');
 const dbConnection = require('./database/connect');
+require('dotenv').config();
+
 // middlewares
 app.use(express.json());
 
@@ -13,15 +15,18 @@ app.all('*', (req, res) => {
 	res.status(404).send('Content not found');
 });
 
+// app port
 const PORT = process.env.PORT || 4500;
 
-const start = async (PORT) => {
+// makes sure that the app starts after connecting to database
+const serverStart = async (PORT) => {
 	try {
-		await dbConnection;
+		await dbConnection(process.env.MONGO_URI);
 		app.listen(PORT, console.log('Server on 4500'));
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-start()
+// starts the server
+serverStart(PORT);
