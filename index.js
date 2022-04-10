@@ -1,20 +1,12 @@
 const express = require('express');
 const app = express();
-const path = require('path');
-
+const contactsRoutes = require('./routes/contacts');
+const dbConnection = require('./database/connect');
 // middlewares
 app.use(express.json());
 
-// get all contacts
-app.get('/api/v1/contacts', (req, res) => {
-	res.status(200).json({ name: 'Lara Crawller', number: 782398374 });
-});
-
-// save a contact
-
-// update a contact
-
-// delete a contact
+// contact routes
+app.use('/api/v1/contacts', contactsRoutes);
 
 // error messages
 app.all('*', (req, res) => {
@@ -22,4 +14,14 @@ app.all('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 4500;
-app.listen(PORT, console.log('Server on 4500'));
+
+const start = async (PORT) => {
+	try {
+		await dbConnection;
+		app.listen(PORT, console.log('Server on 4500'));
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+start()
