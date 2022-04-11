@@ -23,4 +23,24 @@ router
 		}
 	});
 
+router.route('/:id').get(async (req, res) => {
+	try {
+		// contact id from req.params
+		const { id: contactID } = req.params;
+		console.log(contactID);
+		const contact = await Contact.findOne({ _id: contactID });
+
+		// if contact is not found
+		if (!contact) {
+			return res
+				.status(404)
+				.json({ message: `No contact with id: ${contactID}` });
+		}
+
+		res.status(200).json(contact);
+	} catch (err) {
+		res.status(500).json({ err });
+	}
+});
+
 module.exports = router;
