@@ -34,7 +34,7 @@ router
 			if (!contact) {
 				return res
 					.status(404)
-					.json({ message: `No contact with id: ${contactID}` });
+					.json({ message: `No such contact with id: ${contactID}` });
 			}
 
 			res.status(200).json(contact);
@@ -50,9 +50,32 @@ router
 			if (!deletedContact) {
 				return res
 					.status(404)
-					.json({ message: `No contact with id: ${contactID}` });
+					.json({ message: `No such contact with id: ${contactID}` });
 			}
 			res.status(200).json({ message: 'Deleted sucessfully.' });
+		} catch (err) {
+			res.status(500).json(err);
+		}
+	})
+
+	.patch(async (req, res) => {
+		try {
+			const { id: contactID } = req.params;
+			const updatedContact = await Contact.findOneAndUpdate(
+				{ _id: contactID },
+				req.body,
+				{
+					runValidators: true,
+					new: true,
+				}
+			);
+
+			if (!updatedContact) {
+				return res
+					.status(404)
+					.json({ message: `No such contact with id: ${contactID}` });
+			}
+			res.status(200).json({ message: 'Updated sucessfully.' });
 		} catch (err) {
 			res.status(500).json(err);
 		}
