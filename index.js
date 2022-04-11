@@ -3,20 +3,14 @@ const app = express();
 const contactsRoutes = require('./routes/contacts');
 const dbConnection = require('./database/connect');
 const env = require('dotenv');
-
+const notFoundRoute = require('./middlewares/not-found');
 // environment configuration
 env.config();
 
 // middlewares
 app.use(express.json());
-
-// contact routes
+app.use(notFoundRoute);
 app.use('/api/v1/contacts', contactsRoutes);
-
-// error messages
-app.all('*', (req, res) => {
-	res.status(404).send('Content not found');
-});
 
 // app port
 const PORT = process.env.PORT || 4500;
