@@ -2,9 +2,10 @@ const express = require('express');
 const app = express();
 const contactsRoutes = require('./routes/contacts');
 const dbConnection = require('./database/connect');
+const env = require('dotenv');
 
 // environment configuration
-require('dotenv').config();
+env.config();
 
 // middlewares
 app.use(express.json());

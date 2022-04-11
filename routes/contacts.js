@@ -18,29 +18,44 @@ router
 			const newContact = await Contact.create(req.body);
 			res.status(201).json(newContact);
 		} catch (err) {
-			console.log(err);
 			res.status(500).json({ err });
 		}
 	});
 
-router.route('/:id').get(async (req, res) => {
-	try {
-		// contact id from req.params
-		const { id: contactID } = req.params;
-		console.log(contactID);
-		const contact = await Contact.findOne({ _id: contactID });
+router
+	.route('/:id')
+	.get(async (req, res) => {
+		try {
+			// contact id as contactID (alias of id) from req.params
+			const { id: contactID } = req.params;
+			const contact = await Contact.findOne({ _id: contactID });
 
-		// if contact is not found
-		if (!contact) {
-			return res
-				.status(404)
-				.json({ message: `No contact with id: ${contactID}` });
+			// if contact is not found
+			if (!contact) {
+				return res
+					.status(404)
+					.json({ message: `No contact with id: ${contactID}` });
+			}
+
+			res.status(200).json(contact);
+		} catch (err) {
+			res.status(500).json({ err });
 		}
+	})
 
-		res.status(200).json(contact);
-	} catch (err) {
-		res.status(500).json({ err });
-	}
-});
+	.delete(async (req, res) => {
+		try {
+			const { id: contactID } = req.params;
+			const deletedContact = await Contact.findOneAndDelete({ _id: contactID });
+			if (!deletedContact) {
+				return res
+					.status(404)
+					.json({ message: `No contact with id: ${contactID}` });
+			}
+			res.status(200).json({ message: 'Deleted sucessfully.' });
+		} catch (err) {
+			res.status(500).json(err);
+		}
+	});
 
 module.exports = router;
