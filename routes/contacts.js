@@ -4,15 +4,22 @@ const Contact = require('../models/contact-model');
 
 router
 	.route('/')
-	.get((req, res) => {
-		res.status(200).json({ name: 'Lara Crawller', number: 782398374 });
+	.get(async (req, res) => {
+		try {
+			const contacts = await Contact.find({});
+			res.status(200).json(contacts);
+		} catch (err) {
+			res.status(500).json({ err });
+		}
 	})
+
 	.post(async (req, res) => {
 		try {
 			const newContact = await Contact.create(req.body);
 			res.status(201).json(newContact);
 		} catch (err) {
 			console.log(err);
+			res.status(500).json({ err });
 		}
 	});
 
