@@ -30,7 +30,6 @@ const getSingleContact = async (req, res) => {
 				.status(404)
 				.json({ message: `No such contact with id: ${contactID}` });
 		}
-
 		res.status(200).json(contact);
 	} catch (err) {
 		res.status(500).json({ err });

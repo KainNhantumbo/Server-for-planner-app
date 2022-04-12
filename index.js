@@ -4,13 +4,16 @@ const contactsRoutes = require('./routes/contacts');
 const dbConnection = require('./database/connect');
 const env = require('dotenv');
 const notFoundRoute = require('./middlewares/not-found');
+const cors = require('cors');
+
 // environment configuration
 env.config();
 
 // middlewares
+app.use(cors());
 app.use(express.json());
-app.use(notFoundRoute);
 app.use('/api/v1/contacts', contactsRoutes);
+app.use(notFoundRoute);
 
 // app port
 const PORT = process.env.PORT || 4500;
