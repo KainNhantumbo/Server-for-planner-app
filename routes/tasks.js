@@ -18,25 +18,55 @@ router
 		try {
 			const newTask = req.body;
 			await Task.create(newTask);
+			res.status(201).json({ status: 'sucessfull' });
 		} catch (err) {
 			res.status(500).json({ err });
 		}
 	});
 
-router.route(':id').get(async (req, res) => {
-	try {
-		const { id: taskID } = req.params;
-		const task = Task.findOne({ _id: taskID });
+router
+	.route('/:id')
+	.get(async (req, res) => {
+		try {
+			const { id: taskID } = req.params;
+			const task = await Task.findOne({ _id: taskID });
 
-		if (!task) {
-			res.status(404).json({ message: 'Task not found.' });
+			if (!task) {
+				res.status(404).json({ message: 'Task not found.' });
+			}
+
+			res
+				.status(200)
+				.json({ data: task, status: 'sucessfull', length: task.length });
+		} catch (err) {
+			res.status(500).json({ err });
 		}
+	})
+	.patch(async (req, res) => {
+		try {
+			const { id: taskID } = req.params;
+			const updatedTask = await Task.findOneAndUpdate(
+				{
+					_id: taskID,
+				},
+				req.body,
+				{ new: true, runValidators: true }
+			);
 
-		res
-			.status(200)
-			.json({ data: task, status: 'sucessfull', length: task.length });
-	} catch (err) {
-		res.status(500).json({ err });
-	}
-});
+			if (!updatedTask) {
+				return res.status(304).json({ status: 'failed' });
+			}
+			res.status(202).json({ status: 'sucessfull' });
+		} catch (err) {
+			res.status(500).json({ err });
+		}
+	})
+	.delete(async(req, res)=> {
+		try {
+			const {id: taskID} =req.params;
+		} catch (err) {
+			
+		}
+	});
+
 module.exports = router;
