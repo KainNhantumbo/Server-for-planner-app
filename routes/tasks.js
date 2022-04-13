@@ -61,11 +61,13 @@ router
 			res.status(500).json({ err });
 		}
 	})
-	.delete(async(req, res)=> {
+	.delete(async (req, res) => {
 		try {
-			const {id: taskID} =req.params;
+			const { id: taskID } = req.params;
+			await Task.findOneAndDelete({ _id: taskID });
+			res.status(200).json({ status: 'sucessfull' });
 		} catch (err) {
-			
+			res.status(500).json({ err });
 		}
 	});
 
