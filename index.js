@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const contactsRoutes = require('./routes/contacts');
 const taskRoutes = require('./routes/tasks');
+const authRoutes = require('./routes/auth');
 const dbConnection = require('./database/connect');
 const env = require('dotenv');
 const notFoundRoute = require('./middlewares/not-found');
@@ -15,14 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/v1/contacts', contactsRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/auth', authRoutes);
 app.use(notFoundRoute);
 
 // app port
 const PORT = process.env.PORT || 4500;
-
-// /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
-// /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 // makes sure that the app starts after connecting to database
 const serverStart = async (PORT) => {
