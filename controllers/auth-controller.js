@@ -6,6 +6,21 @@ const bcrypt = require('bcrypt');
 // environment config
 env.config();
 
+// function that creates tokens
+const tokenCreator = (user) =>
+	new Promise((resolve) => {
+		const token = jwt.sign(
+			{
+				user_id: user._id,
+				user_name: `${user.name} ${user.surname}`,
+			},
+			process.env.SECRET_TOKEN,
+			{ expiresIn: process.env.JWT_LIFETIME }
+		);
+
+		resolve(token);
+	});
+
 // login middleware function
 const login = async (req, res) => {
 	try {
@@ -39,14 +54,7 @@ const login = async (req, res) => {
 		}
 
 		// generates a jwt token
-		const token = jwt.sign(
-			{
-				user_id: user._id,
-				user_name: `${user.name} ${user.surname}`,
-			},
-			process.env.SECRET_TOKEN,
-			{ expiresIn: process.env.JWT_LIFETIME }
-		);
+		const token = await tokenCreator(user);
 
 		// as response, sends a user id, user name and access token
 		res.status(200).json({
@@ -67,14 +75,7 @@ const register = async (req, res) => {
 		const user = await User.create({ ...credentials });
 
 		// generates a jwt token
-		const token = jwt.sign(
-			{
-				user_id: user._id,
-				user_name: `${user.name} ${user.surname}`,
-			},
-			process.env.SECRET_TOKEN,
-			{ expiresIn: process.env.JWT_LIFETIME }
-		);
+		const token = await tokenCreator(user);
 
 		// as response, sends a user id, user name and access token
 		res.status(201).json({
