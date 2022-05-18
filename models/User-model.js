@@ -32,9 +32,12 @@ const userSchema = new mongoose.Schema({
 	},
 });
 
+// before saving a user, bcrypt hashes the password
+// that is in the schema
 userSchema.pre('save', async function () {
 	const salt = await bcrypt.genSalt(10);
 	this.password = await bcrypt.hash(this.password, salt);
 });
 
+// exports a user model
 module.exports = mongoose.model('User', userSchema);
