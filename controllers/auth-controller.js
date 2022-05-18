@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 // environment config
 env.config();
 
-// function that creates tokens
+// asyncronous function that creates tokens
 const tokenCreator = (user) =>
 	new Promise((resolve) => {
 		const token = jwt.sign(
@@ -39,9 +39,7 @@ const login = async (req, res) => {
 		// verify if that user exists in the database
 		// if not, throws an error
 		if (!user) {
-			return res
-				.status(404)
-				.json({ message: 'User with provided email not found.' });
+			return res.status(401).json({ message: 'Invalid credentials.' });
 		}
 
 		// compares the password
