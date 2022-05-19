@@ -7,9 +7,8 @@ const {
 	updateTask,
 	deleteTask,
 } = require('../controllers/tasks-controller');
-const authUser = require('../middlewares/auth')
 
-router.route('/').get(authUser, getTasks).post(createTask);
+router.route('/').get(getTasks).post(createTask);
 
 router.route('/:id').get(getSingleTask).patch(updateTask).delete(deleteTask);
 

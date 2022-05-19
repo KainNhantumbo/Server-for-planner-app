@@ -24,7 +24,7 @@ const authUser = async (req, res, next) => {
 		// if compromised, throws an error
 		const payload = await verifyToken(token, process.env.SECRET_TOKEN);
 		// populates the request object with user data
-		req.user = { user_id: payload.user_id, user_name: payload.user_name };
+		req.user = { user_id: payload.user_id };
 		// if its all OK, the next function is called
 		next();
 	} catch (err) {

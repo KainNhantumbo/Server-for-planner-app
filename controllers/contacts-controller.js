@@ -3,16 +3,17 @@ const Contact = require('../models/contact-model');
 const getContacts = async (req, res) => {
 	try {
 		const contacts = await Contact.find({});
-		res.status(200).json(contacts);
+		res.status(200).json({ results: contacts.length, data: contacts });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
 };
 
+// create a new contact controller
 const saveContact = async (req, res) => {
 	try {
-		const newContact = await Contact.create(req.body);
-		res.status(201).json(newContact);
+		await Contact.create(req.body);
+		res.status(201).json({ message: 'Created.' });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
@@ -30,12 +31,13 @@ const getSingleContact = async (req, res) => {
 				.status(404)
 				.json({ message: `No such contact with id: ${contactID}` });
 		}
-		res.status(200).json(contact);
+		res.status(200).json({ data: contact });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
 };
 
+// delete contacts controller
 const deleteContact = async (req, res) => {
 	try {
 		const { id: contactID } = req.params;
@@ -45,12 +47,13 @@ const deleteContact = async (req, res) => {
 				.status(404)
 				.json({ message: `No such contact with id: ${contactID}` });
 		}
-		res.status(200).json({ message: 'Deleted sucessfully.' });
+		res.status(200).json({ message: 'Deleted successfully.' });
 	} catch (err) {
 		res.status(500).json(err);
 	}
 };
 
+// upadate contacts controller
 const updateContact = async (req, res) => {
 	try {
 		const { id: contactID } = req.params;
@@ -68,7 +71,7 @@ const updateContact = async (req, res) => {
 				.status(404)
 				.json({ message: `No such contact with id: ${contactID}` });
 		}
-		res.status(200).json({ message: 'Updated sucessfully.' });
+		res.status(200).json({ message: 'Updated successfully.' });
 	} catch (err) {
 		res.status(500).json(err);
 	}

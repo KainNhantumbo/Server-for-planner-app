@@ -4,9 +4,10 @@ const Task = require('../models/task-model');
 const getTasks = async (req, res) => {
 	try {
 		const tasks = await Task.find({});
+		console.log(req.user);
 		res
 			.status(200)
-			.json({user: req.user, data: tasks, length: tasks.length, status: 'sucessfull' });
+			.json({ data: tasks, length: tasks.length, status: 'sucessfull' });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
@@ -45,6 +46,11 @@ const getSingleTask = async (req, res) => {
 const updateTask = async (req, res) => {
 	try {
 		const { id: taskID } = req.params;
+		// cheks if the task is present
+		if (!taskID) {
+			return res.status(400).json({ message: 'Resource ID required.' });
+		}
+		// updates the task
 		const updatedTask = await Task.findOneAndUpdate(
 			{
 				_id: taskID,
@@ -54,9 +60,9 @@ const updateTask = async (req, res) => {
 		);
 
 		if (!updatedTask) {
-			return res.status(304).json({ status: 'failed' });
+			return res.status(500).json({ message: 'Update failed.' });
 		}
-		res.status(202).json({ status: 'sucessfull' });
+		res.status(202).json({ message: 'Updated successfully.' });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
