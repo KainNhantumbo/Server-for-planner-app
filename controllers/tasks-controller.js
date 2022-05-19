@@ -7,15 +7,13 @@ const getTasks = async (req, res) => {
 		const userID = req.user.user_id;
 		// finds the user data
 		const tasks = await Task.find({ createdBy: userID }).sort('createdAt');
-		res
-			.status(200)
-			.json({ data: tasks, length: tasks.length, status: 'sucessfull' });
+		res.status(200).json({ results: tasks.length, data: tasks });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
 };
 
-// create a new task
+// create a new user task
 const createTask = async (req, res) => {
 	try {
 		// populates request body object with the user id
@@ -37,9 +35,7 @@ const getSingleTask = async (req, res) => {
 		if (!task) {
 			return res.status(404).json({ message: 'Task not found.' });
 		}
-		res
-			.status(200)
-			.json({ data: task, status: 'sucessfull', length: task.length });
+		res.status(200).json({ results: task.length, data: task });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
@@ -81,7 +77,7 @@ const deleteTask = async (req, res) => {
 		const userID = req.user.user_id;
 		const { id: taskID } = req.params;
 		await Task.findOneAndDelete({ _id: taskID, createdBy: userID });
-		res.status(200).json({ status: 'sucessfull' });
+		res.status(200).json({ message: 'Deleted successfully' });
 	} catch (err) {
 		res.status(500).json({ err });
 	}
