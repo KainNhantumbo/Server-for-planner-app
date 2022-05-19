@@ -3,8 +3,10 @@ const Task = require('../models/task-model');
 // gets all the stored tasks
 const getTasks = async (req, res) => {
 	try {
-		const tasks = await Task.find({});
-		console.log(req.user);
+		// picks the user id from request
+		const userID = req.user.user_id;
+		// finds the user data
+		const tasks = await Task.find({ createdBy: userID }).sort('createdAt');
 		res
 			.status(200)
 			.json({ data: tasks, length: tasks.length, status: 'sucessfull' });
@@ -16,8 +18,9 @@ const getTasks = async (req, res) => {
 // create a new task
 const createTask = async (req, res) => {
 	try {
-		const newTask = req.body;
-		await Task.create(newTask);
+		// populates request body object with the user id
+		req.body.createdBy = req.user.user_id;
+		await Task.create(req.body);
 		res.status(201).json({ status: 'sucessfull' });
 	} catch (err) {
 		res.status(500).json({ err });
@@ -27,13 +30,13 @@ const createTask = async (req, res) => {
 // gets a single task by id in req.params object
 const getSingleTask = async (req, res) => {
 	try {
+		// picks the user id from request
+		const userID = req.user.user_id;
 		const { id: taskID } = req.params;
-		const task = await Task.findOne({ _id: taskID });
-
+		const task = await Task.findOne({ _id: taskID, createdBy: userID });
 		if (!task) {
-			res.status(404).json({ message: 'Task not found.' });
+			return res.status(404).json({ message: 'Task not found.' });
 		}
-
 		res
 			.status(200)
 			.json({ data: task, status: 'sucessfull', length: task.length });
@@ -42,11 +45,13 @@ const getSingleTask = async (req, res) => {
 	}
 };
 
-// updates a stored task
+// updates a user stored task
 const updateTask = async (req, res) => {
 	try {
+		// picks the user id from request
+		const userID = req.user.user_id;
 		const { id: taskID } = req.params;
-		// cheks if the task is present
+		// cheks if the task id is present
 		if (!taskID) {
 			return res.status(400).json({ message: 'Resource ID required.' });
 		}
@@ -54,6 +59,7 @@ const updateTask = async (req, res) => {
 		const updatedTask = await Task.findOneAndUpdate(
 			{
 				_id: taskID,
+				createdBy: userID,
 			},
 			req.body,
 			{ new: true, runValidators: true }
@@ -68,11 +74,13 @@ const updateTask = async (req, res) => {
 	}
 };
 
-// deletes a task
+// deletes a user task
 const deleteTask = async (req, res) => {
 	try {
+		// picks the user id from request
+		const userID = req.user.user_id;
 		const { id: taskID } = req.params;
-		await Task.findOneAndDelete({ _id: taskID });
+		await Task.findOneAndDelete({ _id: taskID, createdBy: userID });
 		res.status(200).json({ status: 'sucessfull' });
 	} catch (err) {
 		res.status(500).json({ err });
