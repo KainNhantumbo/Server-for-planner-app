@@ -5,8 +5,16 @@ const getTasks = async (req, res) => {
 	try {
 		// picks the user id from request
 		const userID = req.user.user_id;
-		// finds the user data
-		const tasks = await Task.find({ createdBy: userID }).sort('createdAt');
+		const query_params = { createdBy: userID };
+		const { search } = req.query;
+
+		// if search query value exists, it will search
+		// tasks based on it
+		if (search) {
+			query_params.task = { $regex: search, $options: 'i' };
+		}
+		// finds the user data, sorted by created time
+		const tasks = await Task.find(query_params).sort('updatedAt');
 		res.status(200).json({ results: tasks.length, data: tasks });
 	} catch (err) {
 		res.status(500).json({ err });

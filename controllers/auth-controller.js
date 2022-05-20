@@ -56,7 +56,6 @@ const login = async (req, res) => {
 
 		// as response, sends a user id, user name and access token
 		res.status(200).json({
-			user_id: user._id,
 			user_name: `${user.name} ${user.surname}`,
 			token,
 		});
@@ -77,7 +76,6 @@ const register = async (req, res) => {
 
 		// as response, sends a user id, user name and access token
 		res.status(201).json({
-			user_id: user._id,
 			user_name: `${user.name} ${user.surname}`,
 			token,
 		});

@@ -5,7 +5,16 @@ const getContacts = async (req, res) => {
 	try {
 		// picks the user id from request
 		const userID = req.user.user_id;
-		const contacts = await Contact.find({ createdBy: userID });
+		// picks search query
+		const { search } = req.query;
+		const query_params = { createdBy: userID };
+
+		if (search) {
+			// returns results based on query params
+			query_params.name = { $regex: search, $options: 'i' };
+			console.log(query_params);
+		}
+		const contacts = await Contact.find(query_params).sort('name');
 		res.status(200).json({ results: contacts.length, data: contacts });
 	} catch (err) {
 		res.status(500).json({ err });
