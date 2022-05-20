@@ -12,7 +12,6 @@ const getContacts = async (req, res) => {
 		if (search) {
 			// returns results based on query params
 			query_params.name = { $regex: search, $options: 'i' };
-			console.log(query_params);
 		}
 		const contacts = await Contact.find(query_params).sort('name');
 		res.status(200).json({ results: contacts.length, data: contacts });

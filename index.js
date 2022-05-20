@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const contactsRoutes = require('./routes/contacts');
 const taskRoutes = require('./routes/tasks');
+const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const dbConnection = require('./database/connect');
 const env = require('dotenv');
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/v1/contacts', authUser, contactsRoutes);
 app.use('/api/v1/tasks', authUser, taskRoutes);
+app.use('/api/v1/users', authUser, userRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use(notFoundRoute);
 
