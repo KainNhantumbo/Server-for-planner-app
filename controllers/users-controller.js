@@ -7,15 +7,12 @@ const getUserData = async (req, res) => {
 	try {
 		const user_id = req.user.user_id;
 		// gets user data excluding password
-		const user_info = await User.find({ _id: user_id }).select(
-			'-password'
-		);
+		const user_info = await User.find({ _id: user_id }).select('-password');
 		// gets tasks from database
 		const tasks = await Task.find({ createdBy: user_id }).select('task');
 		// gets contacts(name) from database
 		const contacts = await Contact.find({ createdBy: user_id }).select('name');
 
-		// packs all user data
 		const data = {
 			user: user_info,
 			tasks_saved: tasks.length,
@@ -26,6 +23,17 @@ const getUserData = async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ err });
 	}
-}
+};
 
-module.exports=getUserData
+// deletes authenticated user from database
+const deleteUser = async (req, res) => {
+	try {
+		const user_id = req.user.user_id;
+		await User.findOneAndDelete({ _id: user_id });
+		res.status(200).json({ message: 'Account deleted.' });
+	} catch (err) {
+		res.status(500).json({ err });
+	}
+};
+
+module.exports = { getUserData, deleteUser };
