@@ -1,16 +1,11 @@
 const Contact = require('../models/contact-model');
 
-// gets all user contacts
 const getContacts = async (req, res) => {
 	try {
-		// picks the user id from request
 		const userID = req.user.user_id;
-		// picks search query
 		const { search } = req.query;
 		const query_params = { createdBy: userID };
-
 		if (search) {
-			// returns results based on query params
 			query_params.name = { $regex: search, $options: 'i' };
 		}
 		const contacts = await Contact.find(query_params).sort('name');
@@ -20,10 +15,8 @@ const getContacts = async (req, res) => {
 	}
 };
 
-// create a new contact controller
 const createContact = async (req, res) => {
 	try {
-		// picks the user id from request
 		req.body.createdBy = req.user.user_id;
 		await Contact.create(req.body);
 		res.status(201).json({ message: 'Created.' });
@@ -34,16 +27,12 @@ const createContact = async (req, res) => {
 
 const getSingleContact = async (req, res) => {
 	try {
-		// picks the user id from request
 		const userID = req.user.user_id;
-		// contact id as contactID (alias of id) from req.params
 		const { id: contactID } = req.params;
 		const contact = await Contact.findOne({
 			_id: contactID,
 			createdBy: userID,
 		});
-
-		// if contact is not found
 		if (!contact) {
 			return res
 				.status(404)
@@ -55,10 +44,8 @@ const getSingleContact = async (req, res) => {
 	}
 };
 
-// delete contacts controller
 const deleteContact = async (req, res) => {
 	try {
-		// picks the user id from request
 		const userID = req.user.user_id;
 		const { id: contactID } = req.params;
 		await Contact.findOneAndDelete({ _id: contactID, createdBy: userID });
@@ -68,10 +55,8 @@ const deleteContact = async (req, res) => {
 	}
 };
 
-// upadate contacts controller
 const updateContact = async (req, res) => {
 	try {
-		// picks the user id from request
 		const userID = req.user.user_id;
 		const { id: contactID } = req.params;
 		await Contact.findOneAndUpdate(
