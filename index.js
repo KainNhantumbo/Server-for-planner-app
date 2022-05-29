@@ -10,10 +10,23 @@ const notFoundRoute = require('./middlewares/not-found');
 const cors = require('cors');
 const authUser = require('./middlewares/auth');
 
+// security
+const helmet = require('helmet');
+const xssCleaner = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+	windowMs: 10 * 60 * 1000,
+	max: 100,
+	standardHeaders: true,
+	legacyHeaders: false,
+});
 // environment configuration
 env.config();
 
 // middlewares
+app.use(limiter);
+app.use(helmet());
+app.use(xssCleaner());
 app.use(cors());
 app.use(express.json());
 app.use('/api/v1/contacts', authUser, contactsRoutes);
@@ -22,7 +35,6 @@ app.use('/api/v1/users', authUser, userRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use(notFoundRoute);
 
-// app port
 const PORT = process.env.PORT || 4500;
 
 // makes sure that the app starts after connecting to database
