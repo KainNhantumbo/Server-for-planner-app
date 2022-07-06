@@ -28,6 +28,11 @@ const authUser = async (req, res, next) => {
 		// if its all OK, the next function is called
 		next();
 	} catch (err) {
+		if (err.message === 'jwt malformed') {
+			return res
+				.status(401)
+				.json({ code: 'ERR_BAD_REQUEST', message: 'Invalid authentication.' });
+		}
 		res.status(500).json({ err });
 	}
 };
