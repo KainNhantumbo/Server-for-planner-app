@@ -27,7 +27,7 @@ env.config();
 app.use(limiter);
 app.use(helmet());
 app.use(xssCleaner());
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors());
 app.use(express.json());
 app.use('/api/v1/contacts', authUser, contactsRoutes);
 app.use('/api/v1/tasks', authUser, taskRoutes);
