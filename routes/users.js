@@ -1,8 +1,10 @@
-const express = require('express');
-const router = express.Router();
 const { getUserData, deleteUser } = require('../controllers/users-controller');
+const router = require('express').Router();
+const asyncWrapper = require('../errors/error-catcher');
 
-// route to get user data
-router.route('/').get(getUserData).delete(deleteUser);
+router
+	.route('/')
+	.get(asyncWrapper(getUserData))
+	.delete(asyncWrapper(deleteUser));
 
 module.exports = router;
