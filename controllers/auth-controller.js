@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const env = require('dotenv');
 const User = require('../models/User-model');
 const bcrypt = require('bcrypt');
+const BaseError = require('../errors/base-error');
 
 // environment config
 env.config();
@@ -21,45 +22,32 @@ const tokenCreator = (user) =>
 	});
 
 const login = async (req, res) => {
-	try {
-		const { email, password } = req.body;
+	const { email, password } = req.body;
+	if (!email || !password)
+		throw new BaseError('Email and password must be provided', 400);
 
-		if (!email || !password) {
-			return res
-				.status(400)
-				.json({ message: 'Email and password must be provided' });
-		}
-		const user = await User.findOne({ email });
-		if (!user) {
-			return res.status(401).json({ message: 'Invalid credentials.' });
-		}
-		const match = await bcrypt.compare(password, user.password);
-		if (!match) {
-			return res.status(401).json({ message: 'Wrong password.' });
-		}
-		const token = await tokenCreator(user);
-		res.status(200).json({
-			user_name: `${user.name} ${user.surname}`,
-			token,
-		});
-	} catch (err) {
-		res.status(500).json({ err });
-	}
+	const user = await User.findOne({ email });
+	if (!user) throw new BaseError('Invalid credentials', 401);
+
+	const match = await bcrypt.compare(password, user.password);
+	if (!match) throw new BaseError('Wrong password', 401);
+
+	const token = await tokenCreator(user);
+	res.status(200).json({
+		user_name: `${user.name} ${user.surname}`,
+		token,
+	});
 };
 
 // register users controller
 const register = async (req, res) => {
-	try {
-		const credentials = req.body;
-		const user = await User.create({ ...credentials });
-		const token = await tokenCreator(user);
-		res.status(201).json({
-			user_name: `${user.name} ${user.surname}`,
-			token,
-		});
-	} catch (err) {
-		res.status(500).json({ err });
-	}
+	const credentials = req.body;
+	const user = await User.create({ ...credentials });
+	const token = await tokenCreator(user);
+	res.status(201).json({
+		user_name: `${user.name} ${user.surname}`,
+		token,
+	});
 };
 
 module.exports = { login, register };

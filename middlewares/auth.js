@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const env = require('dotenv');
-const BaseError = require('../errors/base-error')
+const BaseError = require('../errors/base-error');
+
 
 // environment config
 env.config();
@@ -12,26 +13,17 @@ const verifyToken = (token, secret) =>
 		resolve(result);
 	});
 
-// function that  verifies that user access
+// function that verifies user access
 const authUser = async (req, res, next) => {
-	try {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer '))
-			return res.status(401).json({ message: 'Invalid authentication.' });
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith('Bearer '))
+		throw new BaseError('Invalid authentication', 401);
 
-		const token = authHeader.split(' ')[1];
-		const payload = await verifyToken(token, process.env.SECRET_TOKEN);
-		// populates the request object with user data
-		req.user = { user_id: payload.user_id };
-		next();
-	} catch (err) {
-		if (err.message === 'jwt malformed') {
-			return res
-				.status(401)
-				.json({ code: 'ERR_BAD_REQUEST', message: 'Invalid authentication.' });
-		}
-		res.status(500).json({ err });
-	}
+	const token = authHeader.split(' ')[1];
+	const payload = await verifyToken(token, process.env.SECRET_TOKEN);
+	// populates the request object with user data
+	req.user = { user_id: payload.user_id };
+	next();
 };
 
 module.exports = authUser;
