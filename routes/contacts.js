@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const asyncWrapper = require('../errors/error-catcher');
 const {
 	getContacts,
 	createContact,
@@ -8,12 +9,15 @@ const {
 	updateContact,
 } = require('../controllers/contacts-controller');
 
-router.route('/').get(getContacts).post(createContact);
+router
+	.route('/')
+	.get(asyncWrapper(getContacts))
+	.post(asyncWrapper(createContact));
 
 router
 	.route('/:id')
-	.get(getSingleContact)
-	.delete(deleteContact)
-	.patch(updateContact);
+	.get(asyncWrapper(getSingleContact))
+	.delete(asyncWrapper(deleteContact))
+	.patch(asyncWrapper(updateContact));
 
 module.exports = router;
