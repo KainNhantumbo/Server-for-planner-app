@@ -4,11 +4,12 @@ const contactsRoutes = require('./routes/contacts');
 const taskRoutes = require('./routes/tasks');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
-const dbConnection = require('./database/connect');
 const env = require('dotenv');
 const notFoundRoute = require('./middlewares/not-found');
+const dbConnection = require('./database/connect');
 const cors = require('cors');
 const authUser = require('./middlewares/auth');
+const globalErrorHandler = require('./errors/global-error-handler');
 
 // security
 const helmet = require('helmet');
@@ -16,7 +17,7 @@ const xssCleaner = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
 	windowMs: 10 * 60 * 1000,
-	max: 100,
+	max: 1200,
 	standardHeaders: true,
 	legacyHeaders: false,
 });
@@ -33,7 +34,10 @@ app.use('/api/v1/contacts', authUser, contactsRoutes);
 app.use('/api/v1/tasks', authUser, taskRoutes);
 app.use('/api/v1/users', authUser, userRoutes);
 app.use('/api/v1/auth', authRoutes);
+
+// error handling
 app.use(notFoundRoute);
+app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 4500;
 

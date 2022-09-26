@@ -8,7 +8,7 @@ const getTasks = async (req, res) => {
 		if (search) {
 			query_params.task = { $regex: search, $options: 'i' };
 		}
-		const tasks = await Task.find(query_params).sort('updatedAt');
+		const tasks = await Task.find(query_params).sort('-task');
 		res.status(200).json({ results: tasks.length, data: tasks });
 	} catch (err) {
 		res.status(500).json({ err });
